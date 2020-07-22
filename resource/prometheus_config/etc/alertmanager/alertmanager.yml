@@ -18,7 +18,7 @@ route:
 receivers:
 - name: 'vo_rabbit_monitor'
   webhook_configs:
-  - url: 'http://10.0.1.52:8080/rabbit/alert-hook'
+  - url: 'http://localhost:6543/rabbit/alert-hook'
 - name: 'vo_email'
   email_configs:
   - smarthost: smtp.exmail.qq.com:587

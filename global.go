@@ -28,7 +28,7 @@ func initConfig() {
 	//viper flag 命令行参数
 	var configPath string
 	pflag.StringVarP(&configPath, "config", "c", "", "指定配置文件位置")
-	pflag.StringVarP(&HTTP_SERVER_PORT, "port", "p", "8080", "http服务器的监听端口")
+	pflag.StringVarP(&HTTP_SERVER_PORT, "port", "p", "6543", "http服务器的监听端口")
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 	//viper 配置文件

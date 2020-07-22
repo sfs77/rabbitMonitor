@@ -1,0 +1,11 @@
+[Unit]
+Description=Alertmanager
+Wants=network-online.target prometheus.service alertmanager.service
+After=network-online.target prometheus.service alertmanager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/vo_rabbit_monitor --config /etc/vo_rabbit_monitor/vo_rabbit_monitor.yml --port 6543
+
+[Install]
+WantedBy=multi-user.target
