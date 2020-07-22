@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 )
@@ -32,8 +33,8 @@ func initConfig() {
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 	//viper 配置文件
-	configDir := filepath.Dir(configPath)   //截取文件路径的dir
-	configBase := filepath.Base(configPath) //截取文件路径的filename
+	configDir := filepath.Dir(configPath)                          //截取文件路径的dir
+	configBase := strings.Split(filepath.Base(configPath), ".")[0] //截取文件路径的filename, 去掉扩展名
 	if configBase == "" || configBase == "." || configBase == "/" {
 		viper.SetConfigName("vo_rabbit_monitor")
 	} else {

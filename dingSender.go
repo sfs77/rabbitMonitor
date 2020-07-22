@@ -24,17 +24,17 @@ func generateLevelMsg(level string) (msg string) {
 }
 
 func generateDingTitle(a *Alert) (title string) {
-	title = `ERP生产环境\<` + strings.Split(a.Labels["alertname"], `:`)[0] + `\>报警`
+	title = `ERP生产环境\<` + strings.Split(a.Labels["alertname"], `:`)[0] + `\>告警`
 	return
 }
 
 func generateDingText(a *Alert) (text string) {
 	item := strings.Split(a.Labels["alertname"], `:`)[0]
-	text += `## ERP生产环境 \<` + item + `\> 报警` + "\n"
+	text += `## ERP生产环境 \<` + item + `\> 告警` + "\n"
 	text += `### 等级：` + generateLevelMsg(a.Labels["level"]) + "\n"
 	text += `### 节点：` + a.Labels["node"] + "\n"
 	text += `### 信息：` + a.Annotations["summary"] + "\n"
-	text += `报警项: ` + a.Labels["alertname"] + "\n\n"
+	text += `告警项: ` + a.Labels["alertname"] + "\n\n"
 	text += fmt.Sprintf("[查看Prometheus指标详情](%s)\n\n", a.GeneratorURL)
 	text += fmt.Sprintf("[查看Rabbitmq控制台](%s)\n\n", "http://"+viper.GetString("rabbit_host"))
 	return

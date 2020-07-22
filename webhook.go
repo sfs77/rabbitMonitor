@@ -36,7 +36,7 @@ func alertHookHandler(c *gin.Context) {
 		return
 	}
 	go sendDingAlertMsg(&notification)
-	//如果报警等级有为FORCE_RESTART的等级，并且rabbitMoniter应用的”允许故障自动重启“标志位被置true, 则重启rabbit node, 并钉钉通知
+	//如果告警等级有为FORCE_RESTART的等级，并且rabbitMoniter应用的”允许故障自动重启“标志位被置true, 则重启rabbit node, 并钉钉通知
 	for _, a := range notification.Alerts {
 		if a.Labels["level"] == "FORCE_RESTART" && viper.GetBool("auto_restart") {
 			hostname := strings.Split(a.Labels["node"], "@")[1]
