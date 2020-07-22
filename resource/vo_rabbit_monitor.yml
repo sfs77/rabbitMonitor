@@ -2,6 +2,8 @@ dingtalk_robot_token: e21fcccf388fe8e674d4b8b8c5fc9efe4605d5f656521aa7f0c4658ade
 monitor_nodes_name: msg-server1
 rabbit_host: msg-server1
 rabbit_user: admin
+rabbit_management_port: 15672
+rabbit_amqp_port: 5672
 rabbit_password: pile12rdisonline
 ssh_user: app_tomcat
 ssh_password: bZ24YaT2xI

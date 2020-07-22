@@ -15,21 +15,25 @@ import (
 func initConfig() {
 	//viper环境变量
 	viper.SetEnvPrefix("vo")
-	viper.BindEnv("auto_restart")          //是否允许rabbitmq节点故障时自动重启
-	viper.BindEnv("dingtalk_robot_token")  //钉钉通知群机器人access_token
-	viper.BindEnv("dingtalk_robot_secret") //钉钉通知群机器人secret
-	viper.BindEnv("monitor_nodes_name")    //rabbitmq监控的节点hostname或IP, 逗号分隔
-	viper.BindEnv("monitor_queue_name")    //rabbitmq监控测试用队列名称，默认为"vo_rabbit_monitor"
-	viper.BindEnv("rabbit_cli")            //rabbitmq ssh 命令行控制命令前缀，默认为"sudo service rabbitmq-server"
-	viper.BindEnv("rabbit_host")           //用于发送接受消息，发送api请求的rabbitmq集群hostname或者IP，一般应该为前置的负载均衡
-	viper.BindEnv("rabbit_user")           //rabbitmq用户名
-	viper.BindEnv("rabbit_password")       //rabbitmq用户密码
-	viper.BindEnv("ssh_user")              //rabbitmq节点ssh用户，应在每个节点上都存在此用户，且有sudo权限
-	viper.BindEnv("ssh_password")          //rabbit节点ssh用户密码
+	viper.BindEnv("auto_restart")           //是否允许rabbitmq节点故障时自动重启
+	viper.BindEnv("dingtalk_robot_token")   //钉钉通知群机器人access_token
+	viper.BindEnv("dingtalk_robot_secret")  //钉钉通知群机器人secret
+	viper.BindEnv("monitor_nodes_name")     //rabbitmq监控的节点hostname或IP, 逗号分隔
+	viper.BindEnv("monitor_queue_name")     //rabbitmq监控测试用队列名称，默认为"vo_rabbit_monitor"
+	viper.BindEnv("rabbit_cli")             //rabbitmq ssh 命令行控制命令前缀，默认为"sudo service rabbitmq-server"
+	viper.BindEnv("rabbit_host")            //用于发送接受消息，发送api请求的rabbitmq集群hostname或者IP，一般应该为前置的负载均衡
+	viper.BindEnv("rabbit_user")            //rabbitmq用户名
+	viper.BindEnv("rabbit_password")        //rabbitmq用户密码
+	viper.BindEnv("rabbit_management_port") //rabbitmq管理端口
+	viper.BindEnv("rabbit_amqp_port")       //rabbitmq AMQP端口
+	viper.BindEnv("ssh_user")               //rabbitmq节点ssh用户，应在每个节点上都存在此用户，且有sudo权限
+	viper.BindEnv("ssh_password")           //rabbit节点ssh用户密码
+	viper.BindEnv("http_port")              //http服务器的监听端口
 	//viper flag 命令行参数
 	var configPath string
+	var httpPort string
 	pflag.StringVarP(&configPath, "config", "c", "", "指定配置文件位置")
-	pflag.StringVarP(&HTTP_SERVER_PORT, "port", "p", "6543", "http服务器的监听端口")
+	pflag.StringVarP(&httpPort, "port", "p", "", "http服务器的监听端口, 默认为6543")
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 	//viper 配置文件
@@ -47,10 +51,21 @@ func initConfig() {
 	if err != nil {             // Handle errors reading the config file
 		log.Errorf("error when read config file: %s \n", err)
 	}
+	//viper 设置http监听端口，值的优先级为 命令行设置的端口值 > 环境变量设置的端口值 > 配置文件 > 默认值(6543)
+	if httpPort == "" {
+		if !viper.IsSet("http_port") {
+			viper.SetDefault("http_port", 6543)
+		}
+	} else {
+		viper.Set("http_port", httpPort)
+	}
+	HTTP_SERVER_PORT = viper.GetString("http_port")
 	//viper 设置默认值
 	viper.SetDefault("auto_restart", true)
 	viper.SetDefault("monitor_queue_name", "vo_rabbit_monitor")
 	viper.SetDefault("rabbit_cli", "sudo service rabbitmq-server")
+	viper.SetDefault("rabbit_amqp_port", 5672)
+	viper.SetDefault("rabbit_management_port", 15672)
 	//配置非空验证
 	neededConfigKeys := []string{"dingtalk_robot_token", "monitor_nodes_name",
 		"monitor_queue_name", "rabbit_host", "rabbit_user", "rabbit_password", "ssh_user", "ssh_password"}

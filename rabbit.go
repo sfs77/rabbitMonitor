@@ -155,7 +155,10 @@ type publishDetails struct {
 }
 
 func getRabbitStatus(nodeIp string) (err error) {
-	req, err := http.NewRequest(http.MethodGet, "http://"+nodeIp+":15672/api/nodes", nil)
+	req, err := http.NewRequest(http.MethodGet,
+		fmt.Sprintf("http://%s:%s/api/nodes",
+			nodeIp, viper.GetString("rabbit_management_port")),
+		nil)
 	req.SetBasicAuth(viper.GetString("rabbit_user"), viper.GetString("rabbit_password"))
 	resp, err := HTTP_CLIENT.Do(req)
 	if err != nil {
@@ -169,7 +172,10 @@ func getRabbitStatus(nodeIp string) (err error) {
 }
 
 func getQueuesStatus(nodeIp string) {
-	req, _ := http.NewRequest(http.MethodGet, "http://"+nodeIp+":15672/api/queues", nil)
+	req, _ := http.NewRequest(http.MethodGet,
+		fmt.Sprintf("http://%s:%s/api/queues",
+			nodeIp, viper.GetString("rabbit_management_port")),
+		nil)
 	req.SetBasicAuth(viper.GetString("rabbit_user"), viper.GetString("rabbit_password"))
 	resp, err := HTTP_CLIENT.Do(req)
 	if err != nil {
@@ -283,7 +289,10 @@ func getQueuesOverview(nodeIp string) {
 }
 
 func isUp(nodeIp string) bool {
-	req, _ := http.NewRequest(http.MethodGet, "http://"+nodeIp+":15672/", nil)
+	req, _ := http.NewRequest(http.MethodGet,
+		fmt.Sprintf("http://%s:%s/",
+			nodeIp, viper.GetString("rabbit_management_port")),
+		nil)
 	req.SetBasicAuth(viper.GetString("rabbit_user"), viper.GetString("rabbit_password"))
 	resp, err := HTTP_CLIENT.Do(req)
 	if err != nil {
@@ -300,7 +309,10 @@ func isUp(nodeIp string) bool {
 }
 
 func deleteQueue(nodeIp string, queueName string) error {
-	req, _ := http.NewRequest(http.MethodDelete, "http://"+nodeIp+":15672/api/queues/%2F/"+queueName, nil)
+	req, _ := http.NewRequest(http.MethodDelete,
+		fmt.Sprintf("http://%s:%s/api/queues/%%2F/%s",
+			nodeIp, viper.GetString("rabbit_management_port"), queueName),
+		nil)
 	req.SetBasicAuth(viper.GetString("rabbit_user"), viper.GetString("rabbit_password"))
 	_, err := HTTP_CLIENT.Do(req)
 	if err != nil {
@@ -311,7 +323,12 @@ func deleteQueue(nodeIp string, queueName string) error {
 
 func sendMsgOK(nodeIp string) bool {
 	//conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:5672/%%2F", viper.GetString("rabbit_user"), viper.GetString("rabbit_password"), nodeIp))
+	conn, err := amqp.Dial(
+		fmt.Sprintf("amqp://%s:%s@%s:%s/%%2F",
+			viper.GetString("rabbit_user"),
+			viper.GetString("rabbit_password"),
+			nodeIp,
+			viper.GetString("rabbit_amqp_port")))
 	if err != nil {
 		log.Println("Failed to connect to RabbitMQ Node")
 		return false
@@ -362,7 +379,12 @@ func sendMsgOK(nodeIp string) bool {
 
 func ackMsgOK(nodeIp string) bool {
 	//conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:5672/%%2F", viper.GetString("rabbit_user"), viper.GetString("rabbit_password"), nodeIp))
+	conn, err := amqp.Dial(
+		fmt.Sprintf("amqp://%s:%s@%s:%s/%%2F",
+			viper.GetString("rabbit_user"),
+			viper.GetString("rabbit_password"),
+			nodeIp,
+			viper.GetString("rabbit_amqp_port")))
 	if err != nil {
 		log.Println("Failed to connect to RabbitMQ Node")
 		return false
