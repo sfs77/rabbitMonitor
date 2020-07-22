@@ -1,0 +1,14 @@
+[Unit]
+Description=Alertmanager
+Wants=network-online.target prometheus.service
+After=network-online.target prometheus.service
+
+[Service]
+User=alertmanager
+Group=alertmanager
+Type=simple
+ExecStart=/usr/local/bin/alertmanager --config.file /etc/alertmanager/alertmanager.yml --storage.path /var/lib/alertmanager/ --web.listen-address :29093 --cluster.listen-address 0.0.0.0:9094
+
+[Install]
+WantedBy=multi-user.target
+

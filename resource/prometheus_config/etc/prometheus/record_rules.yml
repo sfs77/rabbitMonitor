@@ -1,0 +1,8 @@
+groups:
+  - name: rabbitmq
+    interval: 10s
+    rules:
+    - record: rabbitmq:cup_usage_percent
+      expr: (1 - (sum by (node) (increase(node_cpu_seconds_total{cluster="rabbitmq",mode="idle"}[15s]))) / (sum by (node) (increase(node_cpu_seconds_total{cluster="rabbitmq"}[15s])))) *100
+    - record: rabbitmq:memory_usage_percent
+      expr: 100 * (1 - ((node_memory_MemFree_bytes{cluster="rabbitmq"}+ node_memory_Cached_bytes{cluster="rabbitmq"} + node_memory_Buffers_bytes{cluster="rabbitmq"}) / node_memory_MemTotal_bytes{cluster="rabbitmq"}))

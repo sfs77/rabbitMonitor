@@ -1,0 +1,7 @@
+dingtalk_robot_token: e21fcccf388fe8e674d4b8b8c5fc9efe4605d5f656521aa7f0c4658ade63b563
+monitor_nodes_name: rabbit
+rabbit_host: rabbit
+rabbit_user: admin
+rabbit_password: admin123
+ssh_user: root
+ssh_password: sfroot94
